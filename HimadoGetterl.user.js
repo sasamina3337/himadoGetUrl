@@ -190,6 +190,9 @@
         if (movieUrl.trim() && movieUrl.startsWith('external:')) {
             movieUrl = movieUrl.replace('external:', '');
         }
+        if (movieUrl.trim() && movieUrl.startsWith('external%3A')) {
+            movieUrl = movieUrl.replace('external%3A', '');
+        }
         if (movieUrl.trim()) {
             movieUrls.push(decodeURL(movieUrl));
         }
@@ -200,6 +203,9 @@
                 var url = decodeURL(source.src);
                 if (url.trim() && url.startsWith('external:')) {
                     url = url.replace('external:', '');
+                }
+                if (url.trim() && url.startsWith('external%3A')) {
+                    url = url.replace('external%3A', '');
                 }
                 if (url.trim()) {
                     movieUrls.push(url);
