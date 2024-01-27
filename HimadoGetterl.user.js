@@ -3,7 +3,7 @@
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
 // @namespace    http://tampermonkey.net/
-// @version      1.12
+// @version      1.13
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
