@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.13
+// @version      1.14
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
@@ -129,7 +129,7 @@
 
             // サムネイルクリック時の遷移処理（必要に応じて）
             thumbImage.onclick = function() {
-                window.location.href = 'https://sakudo.in/?id=' + movie_id + '&file=' + encodeURIComponent(video);
+                window.open('https://sakudo.in/?id=' + movie_id + '&file=' + encodeURIComponent(video), '_blank');
 
             };
 
@@ -230,38 +230,43 @@
     function main() {
         // 動画取得ボタンを追加するコード
         // ボタンを作成する
-        const fetchVideoButton = document.createElement('button');
-        fetchVideoButton.textContent = '動画取得';
-        fetchVideoButton.style.marginLeft = '10px';
-        // ボタンにイベントリスナーを追加する
-        fetchVideoButton.addEventListener('click', function(event) {
-            // デフォルトのフォーム送信を防止
-            event.preventDefault();
-            const videoUrls = getVideoUrls(); // 動画URLリストを取得
+        try{
+            const fetchVideoButton = document.createElement('button');
+            fetchVideoButton.textContent = '動画取得';
+            fetchVideoButton.style.marginLeft = '10px';
+            // ボタンにイベントリスナーを追加する
+            fetchVideoButton.addEventListener('click', function(event) {
+                // デフォルトのフォーム送信を防止
+                event.preventDefault();
+                const videoUrls = getVideoUrls(); // 動画URLリストを取得
 
-            // movie_url と ary_spare_sources_flash が空かどうかを確認
-            if (videoUrls.length === 0) {
-                // 両方とも空の場合、指定されたURLにリダイレクト
-                window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
-                return;
+                // movie_url と ary_spare_sources_flash が空かどうかを確認
+                if (videoUrls.length === 0) {
+                    // 両方とも空の場合、指定されたURLにリダイレクト
+                    //window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
+                    window.open('https://web.archive.org/web/0/' + window.location.href, '_blank');
+                    return;
+                }
+
+                // それ以外の場合は通常の処理を実行
+                updateUIWithVideoAvailability(videoUrls); // 取得したURLリストでUIを更新
+                console.log('取得した動画URLのリスト:', videoUrls);
+                console.log('動画取得ボタンがクリックされました。');
+            });
+
+            // ボタンをページの適切な場所に挿入する
+            // ここでは例としてページの最上部にボタンを追加するコードを書きます
+            const mySourceElement = document.getElementById('mysource');
+            if (mySourceElement) {
+                // 親要素を取得し、ボタンを挿入
+                const parentElement = mySourceElement.parentNode;
+                parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
+            } else {
+                // Myソースが見つからない場合のエラーハンドリング
+                console.error('Myソース要素が見つかりません。');
             }
-
-            // それ以外の場合は通常の処理を実行
-            updateUIWithVideoAvailability(videoUrls); // 取得したURLリストでUIを更新
-            console.log('取得した動画URLのリスト:', videoUrls);
-            console.log('動画取得ボタンがクリックされました。');
-        });
-
-        // ボタンをページの適切な場所に挿入する
-        // ここでは例としてページの最上部にボタンを追加するコードを書きます
-        const mySourceElement = document.getElementById('mysource');
-        if (mySourceElement) {
-            // 親要素を取得し、ボタンを挿入
-            const parentElement = mySourceElement.parentNode;
-            parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
-        } else {
-            // Myソースが見つからない場合のエラーハンドリング
-            console.error('Myソース要素が見つかりません。');
+        } catch(error){
+            window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
         }
     }
 
