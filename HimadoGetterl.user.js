@@ -226,47 +226,60 @@
         // UIを構築する関数を呼び出し、動画リストと再生可能性を渡します
         buildUI(videoUrls, availableMovieUrls);
     }
+
+    // 動画が閲覧できない場合、強制遷移する
+    function checkAndRedirect() {
+        const dataBlocks = document.querySelectorAll('.datablock');
+        dataBlocks.forEach(dataBlock => {
+            if (dataBlock.textContent.includes('この動画は閲覧できません。')) {
+                window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
+            }
+        });
+    }
+
     // メインの関数
     function main() {
         // 動画取得ボタンを追加するコード
         // ボタンを作成する
-        try{
-            const fetchVideoButton = document.createElement('button');
-            fetchVideoButton.textContent = '動画取得';
-            fetchVideoButton.style.marginLeft = '10px';
-            // ボタンにイベントリスナーを追加する
-            fetchVideoButton.addEventListener('click', function(event) {
-                // デフォルトのフォーム送信を防止
-                event.preventDefault();
-                const videoUrls = getVideoUrls(); // 動画URLリストを取得
+        const fetchVideoButton = document.createElement('button');
+        fetchVideoButton.textContent = '動画取得';
+        fetchVideoButton.style.marginLeft = '10px';
 
-                // movie_url と ary_spare_sources_flash が空かどうかを確認
-                if (videoUrls.length === 0) {
-                    // 両方とも空の場合、指定されたURLにリダイレクト
-                    //window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
-                    window.open('https://web.archive.org/web/0/' + window.location.href, '_blank');
-                    return;
-                }
+        // 動画が閲覧できない場合の処理
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAndRedirect();
+        });
 
-                // それ以外の場合は通常の処理を実行
-                updateUIWithVideoAvailability(videoUrls); // 取得したURLリストでUIを更新
-                console.log('取得した動画URLのリスト:', videoUrls);
-                console.log('動画取得ボタンがクリックされました。');
-            });
+        // ボタンにイベントリスナーを追加する
+        fetchVideoButton.addEventListener('click', function(event) {
+            // デフォルトのフォーム送信を防止
+            event.preventDefault();
+            const videoUrls = getVideoUrls(); // 動画URLリストを取得
 
-            // ボタンをページの適切な場所に挿入する
-            // ここでは例としてページの最上部にボタンを追加するコードを書きます
-            const mySourceElement = document.getElementById('mysource');
-            if (mySourceElement) {
-                // 親要素を取得し、ボタンを挿入
-                const parentElement = mySourceElement.parentNode;
-                parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
-            } else {
-                // Myソースが見つからない場合のエラーハンドリング
-                console.error('Myソース要素が見つかりません。');
+            // movie_url と ary_spare_sources_flash が空かどうかを確認
+            if (videoUrls.length === 0) {
+                // 両方とも空の場合、指定されたURLにリダイレクト
+                //window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
+                window.open('https://web.archive.org/web/0/' + window.location.href, '_blank');
+                return;
             }
-        } catch(error){
-            window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
+
+            // それ以外の場合は通常の処理を実行
+            updateUIWithVideoAvailability(videoUrls); // 取得したURLリストでUIを更新
+            console.log('取得した動画URLのリスト:', videoUrls);
+            console.log('動画取得ボタンがクリックされました。');
+        });
+
+        // ボタンをページの適切な場所に挿入する
+        // ここでは例としてページの最上部にボタンを追加するコードを書きます
+        const mySourceElement = document.getElementById('mysource');
+        if (mySourceElement) {
+            // 親要素を取得し、ボタンを挿入
+            const parentElement = mySourceElement.parentNode;
+            parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
+        } else {
+            // Myソースが見つからない場合のエラーハンドリング
+            console.error('Myソース要素が見つかりません。');
         }
     }
 
