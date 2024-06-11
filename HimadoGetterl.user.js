@@ -7,7 +7,7 @@
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
 // @grant        none
-// @updateURL    https://github.com/sasamina3337/himadoGetUrl/HimadoGetterl.user.js
+// @updateURL    https://github.com/sasamina3337/himadoGetUrl/raw/main/HimadoGetterl.user.js
 // ==/UserScript==
 
 (function() {
