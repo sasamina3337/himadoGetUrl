@@ -2,12 +2,12 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.22
+// @version      1.14
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
 // @grant        none
-// @updateURL    https://github.com/sasamina3337/himadoGetUrl/raw/main/HimadoGetterl.user.js
+// @updateURL    https://github.com/sasamina3337/himadoGetUrl/raw/main/HimadoGetter.user.js
 // ==/UserScript==
 
 (function() {
@@ -58,6 +58,7 @@
             return false;
         }
     }
+
 
     function buildUI(videoList, availableMovieUrl) {
         // モーダルウィンドウのコンテナを作成
@@ -157,6 +158,7 @@
 
         alert('URLをクリップボードにコピーしました: ' + text);
     }
+
 
     function displayThumbnail(base64Data, elementId) {
         // イメージ要素を作成
@@ -275,50 +277,6 @@
             // 親要素を取得し、ボタンを挿入
             const parentElement = mySourceElement.parentNode;
             parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
-
-            // ピクチャ・イン・ピクチャボタンの作成と追加
-            const pipButton = document.createElement('button');
-            pipButton.textContent = 'ピクチャ・イン・ピクチャ';
-            pipButton.style.marginLeft = '10px';
-
-            pipButton.addEventListener('click', function(event) {
-                event.preventDefault();
-                const videoElement = document.getElementById('js-video');
-                const canvasElement = document.getElementById('cmCanvas');
-                
-                if (videoElement && canvasElement) {
-                    // 新しいcanvas要素を作成
-                    const newCanvas = document.createElement('canvas');
-                    newCanvas.width = videoElement.videoWidth;
-                    newCanvas.height = videoElement.videoHeight;
-
-                    const context = newCanvas.getContext('2d');
-
-                    function draw() {
-                        context.drawImage(videoElement, 0, 0, newCanvas.width, newCanvas.height);
-                        context.drawImage(canvasElement, 0, 0, newCanvas.width, newCanvas.height);
-                        requestAnimationFrame(draw);
-                    }
-
-                    draw();
-
-                    const pipVideo = document.createElement('video');
-                    const stream = newCanvas.captureStream();
-                    pipVideo.srcObject = stream;
-                    pipVideo.play();
-
-                    pipVideo.addEventListener('loadedmetadata', () => {
-                        pipVideo.requestPictureInPicture().catch(error => {
-                            console.error('Failed to enter Picture-in-Picture mode:', error);
-                        });
-                    });
-                } else {
-                    console.error('指定されたvideoまたはcanvas要素が見つかりません。');
-                }
-            });
-
-            // ピクチャ・イン・ピクチャボタンを追加
-            parentElement.insertBefore(pipButton, fetchVideoButton.nextSibling);
         } else {
             // Myソースが見つからない場合のエラーハンドリング
             console.error('Myソース要素が見つかりません。');
