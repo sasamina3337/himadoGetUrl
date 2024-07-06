@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.20
+// @version      1.22
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
@@ -58,7 +58,6 @@
             return false;
         }
     }
-
 
     function buildUI(videoList, availableMovieUrl) {
         // モーダルウィンドウのコンテナを作成
@@ -158,7 +157,6 @@
 
         alert('URLをクリップボードにコピーしました: ' + text);
     }
-
 
     function displayThumbnail(base64Data, elementId) {
         // イメージ要素を作成
@@ -285,47 +283,37 @@
 
             pipButton.addEventListener('click', function(event) {
                 event.preventDefault();
-                const playerContainer = document.getElementById('playerContainer');
-                if (playerContainer) {
-                    const video = playerContainer.querySelector('video');
-                    const canvas = playerContainer.querySelector('canvas');
-                    
-                    if (video && canvas) {
-                        // 新しいcanvas要素を作成
-                        const newCanvas = document.createElement('canvas');
-                        newCanvas.width = video.videoWidth;
-                        newCanvas.height = video.videoHeight;
+                const videoElement = document.getElementById('js-video');
+                const canvasElement = document.getElementById('cmCanvas');
+                
+                if (videoElement && canvasElement) {
+                    // 新しいcanvas要素を作成
+                    const newCanvas = document.createElement('canvas');
+                    newCanvas.width = videoElement.videoWidth;
+                    newCanvas.height = videoElement.videoHeight;
 
-                        const context = newCanvas.getContext('2d');
+                    const context = newCanvas.getContext('2d');
 
-                        function draw() {
-                            context.drawImage(video, 0, 0, newCanvas.width, newCanvas.height);
-                            context.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
-                            if (document.pictureInPictureElement === newCanvas) {
-                                requestAnimationFrame(draw);
-                            }
-                        }
+                    function draw() {
+                        context.drawImage(videoElement, 0, 0, newCanvas.width, newCanvas.height);
+                        context.drawImage(canvasElement, 0, 0, newCanvas.width, newCanvas.height);
+                        requestAnimationFrame(draw);
+                    }
 
-                        newCanvas.addEventListener('click', function() {
-                            if (document.pictureInPictureElement) {
-                                document.exitPictureInPicture();
-                            } else {
-                                newCanvas.requestPictureInPicture().catch(error => {
-                                    console.error('Failed to enter Picture-in-Picture mode:', error);
-                                });
-                            }
-                        });
+                    draw();
 
-                        draw();
+                    const pipVideo = document.createElement('video');
+                    const stream = newCanvas.captureStream();
+                    pipVideo.srcObject = stream;
+                    pipVideo.play();
 
-                        newCanvas.requestPictureInPicture().catch(error => {
+                    pipVideo.addEventListener('loadedmetadata', () => {
+                        pipVideo.requestPictureInPicture().catch(error => {
                             console.error('Failed to enter Picture-in-Picture mode:', error);
                         });
-                    } else {
-                        console.error('playerContainer内にvideoまたはcanvas要素が見つかりません。');
-                    }
+                    });
                 } else {
-                    console.error('playerContainer要素が見つかりません。');
+                    console.error('指定されたvideoまたはcanvas要素が見つかりません。');
                 }
             });
 
