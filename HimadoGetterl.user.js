@@ -277,6 +277,60 @@
             // 親要素を取得し、ボタンを挿入
             const parentElement = mySourceElement.parentNode;
             parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
+
+            // ピクチャ・イン・ピクチャボタンの作成と追加
+            const pipButton = document.createElement('button');
+            pipButton.textContent = 'ピクチャ・イン・ピクチャ';
+            pipButton.style.marginLeft = '10px';
+
+            pipButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                const playerContainer = document.getElementById('playerContainer');
+                if (playerContainer) {
+                    const video = playerContainer.querySelector('video');
+                    const canvas = playerContainer.querySelector('canvas');
+                    
+                    if (video && canvas) {
+                        // 新しいcanvas要素を作成
+                        const newCanvas = document.createElement('canvas');
+                        newCanvas.width = video.videoWidth;
+                        newCanvas.height = video.videoHeight;
+
+                        const context = newCanvas.getContext('2d');
+
+                        function draw() {
+                            context.drawImage(video, 0, 0, newCanvas.width, newCanvas.height);
+                            context.drawImage(canvas, 0, 0, newCanvas.width, newCanvas.height);
+                            if (document.pictureInPictureElement === newCanvas) {
+                                requestAnimationFrame(draw);
+                            }
+                        }
+
+                        newCanvas.addEventListener('click', function() {
+                            if (document.pictureInPictureElement) {
+                                document.exitPictureInPicture();
+                            } else {
+                                newCanvas.requestPictureInPicture().catch(error => {
+                                    console.error('Failed to enter Picture-in-Picture mode:', error);
+                                });
+                            }
+                        });
+
+                        draw();
+
+                        newCanvas.requestPictureInPicture().catch(error => {
+                            console.error('Failed to enter Picture-in-Picture mode:', error);
+                        });
+                    } else {
+                        console.error('playerContainer内にvideoまたはcanvas要素が見つかりません。');
+                    }
+                } else {
+                    console.error('playerContainer要素が見つかりません。');
+                }
+            });
+
+            // ピクチャ・イン・ピクチャボタンを追加
+            parentElement.insertBefore(pipButton, fetchVideoButton.nextSibling);
         } else {
             // Myソースが見つからない場合のエラーハンドリング
             console.error('Myソース要素が見つかりません。');
