@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.14
+// @version      1.20
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
@@ -277,6 +277,33 @@
             // 親要素を取得し、ボタンを挿入
             const parentElement = mySourceElement.parentNode;
             parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
+
+            // ピクチャインピクチャボタンの作成
+            const pipButton = document.createElement('button');
+            pipButton.textContent = 'ピクチャインピクチャ';
+            pipButton.style.marginLeft = '10px';
+
+            // ピクチャインピクチャボタンにイベントリスナーを追加
+            pipButton.addEventListener('click', function() {
+                const playerElement = document.getElementById('player');
+                if (playerElement) {
+                    if (document.pictureInPictureEnabled) {
+                        if (document.pictureInPictureElement) {
+                            document.exitPictureInPicture();
+                        } else {
+                            playerElement.requestPictureInPicture();
+                        }
+                    } else {
+                        console.error('Document Picture-in-Picture is not enabled.');
+                    }
+                } else {
+                    console.error('Player element not found.');
+                }
+            });
+
+            // ピクチャインピクチャボタンをmySourceElementの後に挿入
+            parentElement.insertBefore(pipButton, mySourceElement.nextSibling);
+
         } else {
             // Myソースが見つからない場合のエラーハンドリング
             console.error('Myソース要素が見つかりません。');
