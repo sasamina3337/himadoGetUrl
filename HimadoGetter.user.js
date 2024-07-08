@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.16
+// @version      1.22
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
