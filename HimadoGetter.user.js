@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.21
+// @version      1.16
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
@@ -233,7 +233,8 @@
             pipButton.textContent = 'ピクチャインピクチャ';
             pipButton.style.marginLeft = '10px';
 
-            pipButton.addEventListener('click', async function() {
+            pipButton.addEventListener('click', async function(event) {
+                event.preventDefault();  // ここでイベントのデフォルト動作を防止
                 const playerElement = document.getElementById('player');
                 if (playerElement) {
                     if (document.pictureInPictureEnabled) {
