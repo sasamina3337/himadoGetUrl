@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.23
+// @version      1.18
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
@@ -189,13 +189,11 @@
 
     async function requestPictureInPicture(element) {
         try {
-            await document.documentElement.requestPictureInPicture();
-            element.width = document.pictureInPictureWindow.width;
-            element.height = document.pictureInPictureWindow.height;
-            document.pictureInPictureWindow.addEventListener('resize', () => {
-                element.width = document.pictureInPictureWindow.width;
-                element.height = document.pictureInPictureWindow.height;
-            });
+            if (element.requestPictureInPicture) {
+                await element.requestPictureInPicture();
+            } else {
+                console.error('The element does not support Picture-in-Picture.');
+            }
         } catch (error) {
             console.error('Failed to enter Picture-in-Picture mode:', error);
         }
