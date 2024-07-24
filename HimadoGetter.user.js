@@ -2,7 +2,7 @@
 // @name         ひまわり動画ゲッター
 // @namespace    https://github.com/sasamina3337/
 // @description  ひまわり動画内に動画url取得用のボタンを表示させる
-// @version      1.14
+// @version      1.20
 // @author       sasamina
 // @match        http://himado.in/*
 // @match        https://web.archive.org/*
@@ -218,26 +218,24 @@
     function updateUIWithVideoAvailability(videoUrls) {
         // 再生可能な動画URLの状態を保持する配列
         const availableMovieUrls = videoUrls.map(url => {
-            // ここでは拡張子のチェックだけを行っていますが、
-            // 実際にはサーバーへのHEADリクエストなどでファイルの存在を確認することが望ましいです。
-            return checkVideoAvailability(url); // 先に実装した関数を利用
-        });
+            //```javascript
+// ==UserScript==
+// @name         ひまわり動画ゲッター
+// @namespace    https://github.com/sasamina3337/
+// @description  ひまわり動画内に動画url取得用のボタンを表示させる
+// @version      1.14
+// @author       sasamina
+// @match        http://himado.in/*
+// @match        https://web.archive.org/*
+// @grant        none
+// @updateURL    https://github.com/sasamina3337/himadoGetUrl/raw/main/HimadoGetter.user.js
+// ==/UserScript==
 
-        // UIを構築する関数を呼び出し、動画リストと再生可能性を渡します
-        buildUI(videoUrls, availableMovieUrls);
-    }
+(function() {
+    'use strict';
 
-    // 動画が閲覧できない場合、強制遷移する
-    function checkAndRedirect() {
-        const dataBlocks = document.querySelectorAll('.datablock');
-        dataBlocks.forEach(dataBlock => {
-            if (dataBlock.textContent.includes('この動画は閲覧できません。')) {
-                window.location.href = 'https://web.archive.org/web/0/' + window.location.href;
-            }
-        });
-    }
+    // 既存の関数定義...
 
-    // メインの関数
     function main() {
         // 動画取得ボタンを追加するコード
         // ボタンを作成する
@@ -277,6 +275,35 @@
             // 親要素を取得し、ボタンを挿入
             const parentElement = mySourceElement.parentNode;
             parentElement.insertBefore(fetchVideoButton, mySourceElement.nextSibling);
+            
+            // ピクチャインピクチャ用のボタンを追加
+            const pipButton = document.createElement('button');
+            pipButton.textContent = 'ピクチャインピクチャ';
+            pipButton.style.marginLeft = '10px';
+            parentElement.insertBefore(pipButton, mySourceElement.nextSibling);
+            
+            // ピクチャインピクチャボタンにイベントリスナーを追加
+            pipButton.addEventListener('click', async function() {
+                const playerElement = document.getElementById('player');
+                if (!playerElement) {
+                    console.error('Player element not found.');
+                    return;
+                }
+
+                if ('documentPictureInPicture' in window) {
+                    try {
+                        const pipWindow = await window.documentPictureInPicture.requestWindow({
+                            width: playerElement.clientWidth,
+                            height: playerElement.clientHeight
+                        });
+                        pipWindow.document.body.appendChild(playerElement);
+                    } catch (error) {
+                        console.error('Failed to enter Picture-in-Picture mode:', error);
+                    }
+                } else {
+                    console.error('Document Picture-in-Picture API is not supported in this browser.');
+                }
+            });
         } else {
             // Myソースが見つからない場合のエラーハンドリング
             console.error('Myソース要素が見つかりません。');
